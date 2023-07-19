@@ -1,0 +1,76 @@
+{% load static %}
+<div class="container-fluid">
+    <div class="row bg-secondary py-1 px-xl-5">
+        <div class="col-lg-6 d-none d-lg-block">
+            <div class="d-inline-flex align-items-center h-100">
+                <a class="text-body mr-3" href="">درباره ما</a>
+                <a class="text-body mr-3" href="{% url 'account:contact_us' %}">ارتباط با ما</a>
+
+            </div>
+        </div>
+        <div class="col-lg-6 text-center text-lg-right">
+            <div class="d-inline-flex align-items-center">
+                {% if request.user.is_authenticated %}
+                    <div>
+                        {% if request.user.full_name %}
+                            <a class="text-body mr-3" href="{% url "account:signup" %}">{{ user.full_name }}</a>
+                        {% else %}
+                            <a class="text-body mr-3" href="{% url "account:signup" %}">{{ user.phone }}</a>
+                        {% endif %}
+                    </div>
+                    <div class="btn btn-outline-dark">
+                        <a href="{% url 'account:logout' %}">خروج</a>
+                    </div>
+                    </div>
+
+                {% else %}
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">حساب
+                            کاربری
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a href="{% url 'account:login' %}" class="dropdown-item">ورود</a>
+                            <a href="{% url 'account:register' %}" class="dropdown-item">ثبت نام</a>
+                        </div>
+                    </div>
+                    </div>
+                {% endif %}
+        <div class="d-inline-flex align-items-center d-block d-lg-none">
+            <a href="" class="btn px-0 ml-2">
+                <i class="fas fa-heart text-dark"></i>
+                <span class="badge text-dark border border-dark rounded-circle"
+                      style="padding-bottom: 2px;">0</span>
+            </a>
+            <a href="" class="btn px-0 ml-2">
+                <i class="fas fa-shopping-cart text-dark"></i>
+                <span class="badge text-dark border border-dark rounded-circle"
+                      style="padding-bottom: 2px;">0</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
+    <div class="col-lg-4">
+        <a href="{% url 'home' %}" class="text-decoration-none">
+            <span class="h1 text-uppercase text-primary bg-dark px-2">فروشگاه</span>
+            <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">کاویان</span>
+        </a>
+    </div>
+    <div class="col-lg-4 col-6 text-left">
+        <form action="{% url 'product:search' %}">
+            <div class="input-group">
+                <input type="search" name="q" class="form-control" placeholder="جست و جوی محصول">
+                <div class="input-group-append">
+                    <button href=""><span class="input-group-text bg-transparent text-primary">
+                        <i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-4 col-6 text-right">
+        <p class="m-0">خدمات مشتری</p>
+        <h5 class="m-0">0991 320 6826</h5>
+    </div>
+</div>
+</div>

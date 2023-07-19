@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block main %}
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="#">صفحه اصلی</a>
+                    <a class="breadcrumb-item text-dark" href="#">فروشگاه</a>
+                    <span class="breadcrumb-item active">سبد خرید</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+    <!-- Cart Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-lg-8 table-responsive mb-5">
+                <table class="table table-light table-borderless table-hover text-center mb-0">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>تصویر</th>
+                        <th>محصول</th>
+                        <th>قیمت</th>
+                        <th>رنگ</th>
+                        <th>سایز</th>
+                        <th>تعداد</th>
+                        <th>جمع کل</th>
+                        <th>حذف</th>
+                    </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                    {% for item in cart %}
+                        <tr>
+                            <td class="align-middle"><img src="{{ item.product.image.url }}" alt=""
+                                                          style="width: 50px;"></td>
+                            <td class="align-middle">{{ item.product.name }}</td>
+                            <td class="align-middle">${{ item.price|intcomma:False }}</td>
+                            <td class="align-middle">{{ item.color }}</td>
+                            <td class="align-middle">{{ item.size }}</td>
+                            <td class="align-middle">{{ item.quantity }}</td>
+                            <td class="align-middle">${{ item.total|intcomma:False }}</td>
+                            <td class="align-middle"><a data-id="{{ object.id }}"
+                                                        href="{% url 'cart:cart_remove' item.id %}"
+                                                        class="delete-btn"><i class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-4">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">خلاصه سبد خرید</span>
+                </h5>
+                <div class="bg-light p-30 mb-5">
+                    <div class="border-bottom pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>جمع کل</h6>
+                            <h6>$150</h6>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">جمع تخفیف</h6>
+                            <h6 class="font-weight-medium">$10</h6>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>قابل پرداخت</h5>
+                            <h5>${{ cart.total|intcomma:False }}</h5>
+                        </div>
+                        {% if request.user.is_authenticated %}
+                            {% if cart.cart.values %}
+                                <a href="{% url 'cart:order_add' %}"
+                                   class="btn btn-block btn-primary font-weight-bold my-3 py-3">تکمیل اطلاعات</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'account:login' %}"
+                               class="btn btn-block btn-danger font-weight-bold my-3 py-3">جهت خرید باید وارد سایت
+                                شوید و اگر حساب کاربری ندارید ایجاد کنید</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Cart End -->
+
+    <script>
+        $(document).on('click', '.delete-btn', function (e) {
+            e.preventDefault();
+
+            var deleteUrl = $(this).attr('href');
+            var deleteId = $(this).data('id');
+
+            Swal.fire({
+                title: 'آیا از حذف محصول مورد نظر اطمینان دارید؟',
+                showCancelButton: true,
+                confirmButtonText: 'بله',
+                cancelButtonText: 'خیر',
+                icon: 'warning'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: deleteUrl,
+                        method: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            id: deleteId
+                        },
+                        success: function (response) {
+                            // پیام موفقیت‌آمیز بودن حذف نمایش داده می‌شود
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'محصول با موفقیت حذف شد',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                // بروزرسانی لیست محصولات
+                                window.location.href = '{% url "cart:cart_detail" %}';
+                            });
+                        },
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

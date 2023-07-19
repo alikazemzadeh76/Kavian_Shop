@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load ratings %}
+
+{% block main %}
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'home' %}">صفحه اصلی</a>
+                    <a class="breadcrumb-item text-dark" href="">فروشگاه</a>
+                    <span class="breadcrumb-item active">جزئیات محصول</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+    <!-- Shop Detail Start -->
+    <div class="container-fluid pb-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-5 mb-30">
+                <div id="product-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner bg-light">
+                        <div class="carousel-item active">
+                            <img class="w-100 h-100" src="{{ products.image.url }}" alt="Image">
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+                        <i class="fa fa-2x fa-angle-left text-dark"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+                        <i class="fa fa-2x fa-angle-right text-dark"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-7 h-auto mb-30">
+                <div class="h-100 bg-light p-30">
+                    <h3>{{ products.name }}</h3>
+                    {% if is_like %}
+                        <a onclick="like('{{ products.slug }}', '{{ products.id }}')">
+                            <i id="like" class="fa fa-heart"></i>
+                        </a>
+                        <span id="count">{{ products.likes.all.count }}</span>
+                    {% else %}
+                        <a onclick="like('{{ products.slug }}', '{{ products.id }}')">
+                            <i id="like" class="far fa-heart"></i>
+                        </a>
+                        <span id="count">{{ products.likes.all.count }}</span>
+                    {% endif %}
+
+
+                    <h3 class="font-weight-semi-bold mb-4">{{ products.price|intcomma:False }}</h3>
+                    <p class="mb-4">{{ product.description }}</p>
+                    <div class="d-flex mb-3">
+                        {% if product.size.all %}
+                            <strong class="text-dark mr-3">سایز های موجود :</strong>
+                        {% endif %}
+                        <form method="post" action="{% url 'cart:cart_add' products.id %}" id="cart-add-form">
+                            {% csrf_token %}
+                            {% for size in products.size.all %}
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" value="{{ size.size }}"
+                                           id="{{ size.size }}" name="size">
+                                    <label class="custom-control-label" for="{{ size.size }}">{{ size }}</label>
+                                </div>
+                            {% endfor %}
+                            <div class="d-flex mb-4">
+                                <strong class="text-dark mr-3">رنگ های موجود :</strong>
+                                {% for color in products.color.all %}
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" value="{{ color.color }}"
+                                               id="{{ color.color }}" name="color">
+                                        <label class="custom-control-label" for="{{ color.color }}">{{ color }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="d-flex align-items-center mb-4 pt-2">
+                                <div class="input-group quantity mr-3" style="width: 130px;">
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-primary btn-minus">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input name="quantity" type="text"
+                                           class="form-control bg-secondary border-0 text-center"
+                                           value="1">
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-primary btn-plus">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-3"><i
+                                        class="fa fa-shopping-cart mr-1"></i>
+                                    افزودن به سبد خرید
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="bg-light p-30">
+                    <div class="nav nav-tabs mb-4">
+                        <a class="nav-item nav-link text-dark active" data-toggle="tab"
+                           href="#tab-pane-1">توضیحات محصول</a>
+                        <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-2">اطلاعات محصول</a>
+                        <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-3">نظرات
+                            ({{ products.comments.count }})</a>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tab-pane-1">
+                            <h4 class="mb-3">توضیحات محصول</h4>
+                            <p>{{ products.description }}</p>
+                        </div>
+                        <div class="tab-pane fade" id="tab-pane-2">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4 class="mb-3">اطلاعات محصول</h4>
+                                    <ul class="list-group list-group-flush">
+                                        {% for info in products.informations.all %}
+                                            <li class="list-group-item px-0">
+                                                {{ info }}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="tab-pane-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4 class="mb-4">کامنت ها</h4>
+                                    {% for comment in products.comments.all %}
+                                        {% if comment.status == True %}
+                                            <div class="media mb-4">
+                                                <div class="media-body">
+                                                    <h6>{{ comment.user.full_name }}</h6>
+                                                    <h6>{{ comment.created }}</h6>
+                                                    <div class="star-ratings">
+                                                        {% ratings products %}
+                                                    </div>
+
+                                                    <p>{{ comment.text }}</p>
+                                                    <hr>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 class="mb-4">ارسال کامنت</h4>
+                                    <div class="d-flex my-3">
+                                        <p class="mb-0 mr-2">امتیاز شما:</p>
+                                        <div class="star-ratings">
+                                            {% ratings products %}
+                                        </div>
+                                    </div>
+                                    {% if request.user.is_authenticated %}
+                                        <form id="comment" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label for="message">کامنت</label>
+                                                <textarea required="required" name="text" cols="30" rows="5"
+                                                          class="form-control"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="name">ایمیل</label>
+                                                <input required="required" type="email" class="form-control"
+                                                       name="email">
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary" type="submit">ارسال</button>
+                                            </div>
+                                        </form>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Shop Detail End -->
+
+    <script>
+        $(document).ready(function () {
+            $("#comment").submit(function (e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: "{% url 'product:product_detail' products.slug %}",
+                    type: "POST",
+                    data: formData,
+                    success: function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'نظر شما با موفقیت ارسال شد و پس از تایید مدیریت ثبت خواهد شد',
+                            confirmButtonText: 'باشه',
+                            allowOutsideClick: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '{% url 'product:product_detail' products.slug %}';
+                            }
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا در ارسال نظر',
+                            confirmButtonText: 'باشه',
+                            allowOutsideClick: true
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+
+{% endblock %}
+

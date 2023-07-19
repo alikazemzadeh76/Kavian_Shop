@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+
+{% block main %}
+    <!-- Carousel Start -->
+    <div class="container-fluid mb-3">
+        <div class="row px-xl-5">
+            <div class="col-lg-8">
+                <div id="header-carousel" class="carousel slide carousel-fade mb-30 mb-lg-0" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#header-carousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#header-carousel" data-slide-to="1"></li>
+                        <li data-target="#header-carousel" data-slide-to="2"></li>
+                        <li data-target="#header-carousel" data-slide-to="3"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        {% for product in recent_products %}
+
+                            <div class="carousel-item position-relative {% if forloop.first %} active {% endif %}" style="height: 430px;">
+                                <img class="position-absolute w-100 h-100" src="{{ product.image.url }}"
+                                     style="object-fit: cover;">
+                                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                                    <div class="p-3" style="max-width: 700px;">
+                                        <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">{{ product.category.first }}</h1>
+                                        <p class="mx-md-5 px-5 animate__animated animate__bounceIn">آخرین محصولات اضافه شده</p>
+                                        <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
+                                           href="{% url 'product:product_detail' product.slug %}">ثبت سفارش</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                {% for product in discount %}
+                    {% if product.discount %}
+                        <div class="product-offer mb-30" style="height: 200px;">
+                            <img class="img-fluid" src="{{ product.image.url }}" alt="">
+                            <div class="offer-text">
+                                <h6 class="text-white text-uppercase">%{{ product.discount }}</h6>
+                                <h3 class="text-white mb-3">تخفیف</h3>
+                                <a href="{% url 'product:product_detail' product.slug %}" class="btn btn-primary">افزودن
+                                    به سبد خرید</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- Carousel End -->
+
+
+    <!-- Featured Start -->
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5 pb-3">
+            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
+                    <h1 class="fa fa-check text-primary m-0 mr-3"></h1>
+                    <h5 class="font-weight-semi-bold m-0">کیفیت بالای محصولات</h5>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
+                    <h1 class="fas fa-exchange-alt text-primary m-0 mr-3"></h1>
+                    <h5 class="font-weight-semi-bold m-0">تضمین کالا</h5>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
+                    <h1 class="fa fa-phone-volume text-primary m-0 mr-3"></h1>
+                    <h5 class="font-weight-semi-bold m-0">پشتیبانی از 9 صبح تا 15</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Featured End -->
+
+
+    <!-- Categories Start -->
+    <div  class="container-fluid pt-5">
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">دسته بندی ها</span>
+        </h2>
+        <div class="row px-xl-5 pb-3">
+            {% for category in categories %}
+                <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                    <a class="text-decoration-none" href="{% url 'product:categoryquery' category.slug %}">
+                        <div class="cat-item d-flex align-items-center mb-4">
+                            <div class="flex-fill pl-3">
+                                <h6>{{ category.title }}</h6>
+                                <small class="text-body">{{ category.product.count }} تعداد محصولات</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Categories End -->
+
+
+    <!-- Products Start -->
+    <div class="container-fluid py-5">
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">محصولات اخیر</span>
+        </h2>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="owl-carousel related-carousel">
+                    {% for product in recent_products %}
+                        <div class="product-item bg-light">
+                            <div class="product-img position-relative overflow-hidden">
+                                <img class="img-fluid w-100" src="{{ product.image.url }}" alt="">
+                                <div class="product-action">
+                                    <a class="btn btn-outline-dark btn-square"
+                                       href="{% url 'product:product_detail' product.slug %}"><i
+                                            class="fa fa-shopping-cart"></i></a>
+                                </div>
+                            </div>
+                            <div class="text-center py-4">
+                                <a class="h6 text-decoration-none text-truncate" href="">{{ product.name }}</a>
+                                <div class="d-flex align-items-center justify-content-center mt-2">
+                                    <h5>${{ product.price|intcomma:False }}</h5>
+                                    <h6 class="text-muted ml-2"></h6>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Products End -->
+
+
+    <!-- Offer Start -->
+    <div class="container-fluid pt-5 pb-3">
+        <div class="row px-xl-5">
+            {% for product in discount %}
+                <div class="col-md-6">
+                    <div class="product-offer mb-30" style="height: 300px;">
+                        <img class="img-fluid" src="{{ product.image.url }}" alt="">
+                        <div class="offer-text">
+                            <h6 class="text-white text-uppercase">{{ product.discount }}%</h6>
+                            <h3 class="text-white mb-3">تخفیف های خاص</h3>
+                            <a href="{% url 'product:product_detail' product.slug %}" class="btn btn-primary">الان ثبت
+                                سفارش کن</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Offer End -->
+
+
+    <!-- Products Start -->
+    <div class="container-fluid py-5">
+        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">محصولات ویژه</span>
+        </h2>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="owl-carousel related-carousel">
+                    {% for product in products %}
+                        <div class="product-item bg-light">
+                            <div class="product-img position-relative overflow-hidden">
+                                <img class="img-fluid w-100" src="{{ product.image.url }}" alt="">
+                                <div class="product-action">
+                                    <a class="btn btn-outline-dark btn-square"
+                                       href="{% url 'product:product_detail' product.slug %}"><i
+                                            class="fa fa-shopping-cart"></i></a>
+                                </div>
+                            </div>
+                            <div class="text-center py-4">
+                                <a class="h6 text-decoration-none text-truncate" href="">{{ product.name }}</a>
+                                <div class="d-flex align-items-center justify-content-center mt-2">
+                                    <h5>${{ product.price|intcomma:False }}</h5>
+                                    <h6 class="text-muted ml-2"></h6>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Products End -->
+{% endblock %}
+
