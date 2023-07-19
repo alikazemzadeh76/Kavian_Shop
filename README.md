@@ -18,7 +18,8 @@ product detail page
 ![Screenshot (134)](https://github.com/alikazemzadeh76/Kavian_Shop/assets/131513515/ce7360d0-7fa2-4d6a-9939-f96cca8650eb)
 
 order page
-![Screenshot (137)](https://github.com/alikazemzadeh76/Kavian_Shop/assets/131513515/37ddd118-1fa2-40b3-aa31-88d041060a62)
+![Screenshot (138)](https://github.com/alikazemzadeh76/Kavian_Shop/assets/131513515/b8e1e98d-4faa-48c2-a9aa-23b80b19bd03)
+
 
 
 contact page
